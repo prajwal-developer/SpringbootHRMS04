@@ -42,6 +42,13 @@ A Human Resource Management System (HRMS) built using Spring Boot.
 ### Payroll
 - POST /payroll
 - GET /payroll
+
+
+
+
+
+<img width="1366" height="767" alt="image" src="https://github.com/user-attachments/assets/b8496972-a24a-4419-8ba3-84fb76689ae4" />
+
 - PUT /payroll/{id}
 
 ## Author
