@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>HUMAN RESOURCE MANAGEMENT SYSTEM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f4f6f9;
+}
+
+.header{
+background:#1e3a8a;
+color:white;
+padding:20px;
+text-align:center;
+}
+
+.container{
+width:95%;
+margin:auto;
+padding:20px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+margin-bottom:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
+text-align:center;
+}
+
+.card h3{
+color:#1e3a8a;
+margin-bottom:10px;
+}
+
+.card p{
+font-size:28px;
+font-weight:bold;
+}
+
+.section{
+background:white;
+padding:20px;
+margin-bottom:25px;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+
+.section h2{
+margin-bottom:15px;
+color:#1e3a8a;
+}
+
+input,select{
+padding:10px;
+margin:5px;
+border:1px solid #ccc;
+border-radius:5px;
+}
+
+button{
+padding:10px 15px;
+background:#1e3a8a;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#14296a;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+th{
+background:#1e3a8a;
+color:white;
+padding:10px;
+}
+
+td{
+padding:8px;
+border-bottom:1px solid #ddd;
+text-align:center;
+}
+
+.search-box{
+margin-bottom:10px;
+}
+
+#aiBot{
+position:fixed;
+bottom:20px;
+right:20px;
+width:350px;
+height:500px;
+background:white;
+border-radius:15px;
+box-shadow:0 0 15px rgba(0,0,0,.2);
+display:flex;
+flex-direction:column;
+overflow:hidden;
+z-index:9999;
+}
+
+#botHeader{
+background:#1e3a8a;
+color:white;
+padding:15px;
+font-size:20px;
+font-weight:bold;
+text-align:center;
+}
+
+#chatMessages{
+flex:1;
+padding:10px;
+overflow-y:auto;
+background:#f8f9fa;
+}
+
+.userMsg{
+background:#dbeafe;
+padding:10px;
+margin:5px;
+border-radius:10px;
+}
+
+.botMsg{
+background:#e5e7eb;
+padding:10px;
+margin:5px;
+border-radius:10px;
+}
+
+#botControls{
+display:flex;
+padding:10px;
+gap:5px;
+}
+
+#botInput{
+flex:1;
+}
+
+</style>
+</head>
+<body>
+
+<div class="header">
+<h1>HRMS Dashboard</h1>
+</div>
+
+<div class="container">
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Employees</h3>
+<p id="empCount">0</p>
+</div>
+
+<div class="card">
+<h3>Total Attendance</h3>
+<p id="attCount">0</p>
+</div>
+
+<div class="card">
+<h3>Total Leaves</h3>
+<p id="leaveCount">0</p>
+</div>
+
+<div class="card">
+<h3>Total Payroll</h3>
+<p id="payrollCount">0</p>
+</div>
+
+</div>
+
+<!-- EMPLOYEE -->
+
+<div class="section">
+
+<h2>Employee Management</h2>
+
+<input type="hidden" id="empId">
+
+<input type="text" id="firstname" placeholder="First Name">
+<input type="text" id="lastname" placeholder="Last Name">
+<input type="email" id="email" placeholder="Email">
+<input type="text" id="phone" placeholder="Phone">
+
+<input type="text" id="department" placeholder="Department">
+<input type="text" id="designation" placeholder="Designation">
+
+<input type="date" id="dob">
+<input type="date" id="joiningDate">
+
+<input type="number" id="salary" placeholder="Salary">
+
+<select id="qualification">
+<option>BACHELORS</option>
+<option>DIPLOMA</option>
+<option>MASTERS</option>
+<option>PHD</option>
+</select>
+
+<button onclick="saveEmployee()">Save Employee</button>
+
+<div class="search-box">
+<input type="number" id="searchEmpId" placeholder="Employee ID">
+<button onclick="getEmployee()">Search</button>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Email</th>
+<th>Department</th>
+<th>Designation</th>
+<th>Salary</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="employeeTable"></tbody>
+
+</table>
+
+</div>
+
+<!-- ATTENDANCE -->
+
+<div class="section">
+
+<h2>Attendance</h2>
+
+<input type="number" id="attendanceEmpId" placeholder="Employee ID">
+<input type="date" id="attendanceDate">
+
+<input type="time" id="checkIn">
+<input type="time" id="checkOut">
+
+<select id="status">
+<option>PRESENT</option>
+<option>ABSENT</option>
+<option>HALF_DAY</option>
+<option>LEAVE</option>
+</select>
+
+<button onclick="saveAttendance()">Mark Attendance</button>
+
+<table>
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Employee</th>
+<th>Date</th>
+<th>Status</th>
+<th>CheckIn</th>
+<th>CheckOut</th>
+</tr>
+</thead>
+
+<tbody id="attendanceTable"></tbody>
+
+</table>
+
+</div>
+
+<!-- LEAVE -->
+
+<div class="section">
+
+<h2>Leave Management</h2>
+
+<input type="number" id="leaveEmpId" placeholder="Employee ID">
+
+<select id="leaveType">
+
+<option>CASUAL_LEAVE</option>
+<option>EARNED_LEAVE</option>
+<option>SICK_LEAVE</option>
+<option>MATERNITY_LEAVE</option>
+<option>PATERNITY_LEAVE</option>
+<option>UNPAID_LEAVE</option>
+
+</select>
+
+<input type="date" id="startDate">
+<input type="date" id="endDate">
+
+<input type="text" id="reason" placeholder="Reason">
+
+<button onclick="applyLeave()">Apply Leave</button>
+
+<table>
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Employee</th>
+<th>Type</th>
+<th>Status</th>
+<th>Start</th>
+<th>End</th>
+</tr>
+</thead>
+
+<tbody id="leaveTable"></tbody>
+
+</table>
+
+</div>
+
+<!-- PAYROLL -->
+
+<div class="section">
+
+<h2>Payroll</h2>
+
+<input type="number" id="payrollEmpId" placeholder="Employee ID">
+
+<input type="number" id="payMonth" placeholder="Month">
+<input type="number" id="payYear" placeholder="Year">
+
+<input type="number" id="basicSalary" placeholder="Basic Salary">
+<input type="number" id="hra" placeholder="HRA">
+<input type="number" id="allowances" placeholder="Allowances">
+<input type="number" id="bonus" placeholder="Bonus">
+<input type="number" id="deductions" placeholder="Deductions">
+
+<button onclick="createPayroll()">Generate Payroll</button>
+
+<table>
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Employee</th>
+<th>Month</th>
+<th>Year</th>
+<th>Basic</th>
+<th>Net Salary</th>
+</tr>
+</thead>
+
+<tbody id="payrollTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- HRMS Genie AI Assistant -->
+<div id="aiBot">
+
+    <div id="botHeader">
+        🤖 HRMS Genie AI Assistant
+    </div>
+
+    <div id="chatMessages"></div>
+
+    <div id="botControls">
+        <input type="text" id="botInput" placeholder="Ask HRMS Genie...">
+        <button onclick="sendBotMessage()">Send</button>
+        <button onclick="startVoice()">🎤</button>
+    </div>
+
+</div>
+
+
+
+<script>
+
+const API="http://localhost:8080";
+
+async function loadDashboard(){
+
+loadEmployees();
+loadAttendance();
+loadLeaves();
+loadPayroll();
+
+}
+
+async function saveEmployee(){
+
+let id=document.getElementById("empId").value;
+
+let employee={
+
+firstname:document.getElementById("firstname").value,
+lastname:document.getElementById("lastname").value,
+email:document.getElementById("email").value,
+phone:document.getElementById("phone").value,
+department:document.getElementById("department").value,
+designation:document.getElementById("designation").value,
+dob:document.getElementById("dob").value,
+joiningDate:document.getElementById("joiningDate").value,
+salary:Number(document.getElementById("salary").value),
+qualification:document.getElementById("qualification").value
+
+};
+
+let url=id?API+"/employees/"+id:API+"/employees";
+
+let method=id?"PUT":"POST";
+
+await fetch(url,{
+method:method,
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(employee)
+});
+
+alert("Employee Saved");
+
+loadEmployees();
+
+}
+
+async function loadEmployees(){
+
+let res=await fetch(API+"/employees");
+let data=await res.json();
+
+empCount.innerHTML=data.length;
+
+let rows="";
+
+data.forEach(e=>{
+
+rows+=`
+<tr>
+<td>${e.empId}</td>
+<td>${e.firstname} ${e.lastname}</td>
+<td>${e.email}</td>
+<td>${e.department}</td>
+<td>${e.designation}</td>
+<td>${e.salary}</td>
+<td>
+<button onclick="editEmployee(${e.empId})">Edit</button>
+<button onclick="deleteEmployee(${e.empId})">Delete</button>
+</td>
+</tr>
+`;
+
+});
+
+employeeTable.innerHTML=rows;
+
+}
+
+async function editEmployee(id){
+
+let res=await fetch(API+"/employees/"+id);
+let e=await res.json();
+
+empId.value=e.empId;
+firstname.value=e.firstname;
+lastname.value=e.lastname;
+email.value=e.email;
+phone.value=e.phone;
+department.value=e.department;
+designation.value=e.designation;
+dob.value=e.dob;
+joiningDate.value=e.joiningDate;
+salary.value=e.salary;
+qualification.value=e.qualification;
+
+}
+
+async function getEmployee(){
+
+let id=document.getElementById("searchEmpId").value;
+
+if(!id)return;
+
+editEmployee(id);
+
+}
+
+async function deleteEmployee(id){
+
+await fetch(API+"/employees/"+id,{
+method:"DELETE"
+});
+
+loadEmployees();
+
+}
+
+async function saveAttendance(){
+
+let obj={
+    employee:{
+        empId:Number(document.getElementById("attendanceEmpId").value)
+    },
+    attendanceDate:document.getElementById("attendanceDate").value,
+    checkIn:document.getElementById("checkIn").value,
+    checkOut:document.getElementById("checkOut").value,
+    status:document.getElementById("status").value
+};
+
+console.log("Sending:", obj);
+
+try{
+
+let res = await fetch(API+"/attendance",{
+    method:"POST",
+    headers:{
+        "Content-Type":"application/json"
+    },
+    body:JSON.stringify(obj)
+});
+
+console.log("Status:",res.status);
+
+let text = await res.text();
+console.log("Response:",text);
+
+if(res.ok){
+    alert("Attendance Saved");
+    loadAttendance();
+}else{
+    alert("Attendance Failed");
+}
+
+}catch(err){
+    console.error(err);
+}
+}
+
+
+async function loadAttendance(){
+
+try{
+
+let res = await fetch(API+"/attendance");
+
+console.log("GET Status:",res.status);
+
+let data = await res.json();
+
+console.log("Attendance Data:",data);
+
+attCount.innerHTML=data.length;
+
+let rows="";
+
+data.forEach(a=>{
+
+rows+=`
+<tr>
+<td>${a.attendanceId || ""}</td>
+<td>${a.employee?.empId || ""}</td>
+<td>${a.attendanceDate || ""}</td>
+<td>${a.status || ""}</td>
+<td>${a.checkIn || ""}</td>
+<td>${a.checkOut || ""}</td>
+</tr>
+`;
+
+});
+
+attendanceTable.innerHTML=rows;
+
+}catch(err){
+console.error("Load Attendance Error:",err);
+}
+}
+
+async function applyLeave(){
+
+let obj={
+
+employee:{
+empId:Number(leaveEmpId.value)
+},
+
+leaveType:leaveType.value,
+startDate:startDate.value,
+endDate:endDate.value,
+reason:reason.value
+
+};
+
+await fetch(API+"/leave",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(obj)
+});
+
+loadLeaves();
+
+}
+
+async function loadLeaves(){
+
+let res=await fetch(API+"/leave");
+let data=await res.json();
+
+leaveCount.innerHTML=data.length;
+
+let rows="";
+
+data.forEach(l=>{
+
+rows+=`
+<tr>
+<td>${l.leaveId}</td>
+<td>${l.employee?.empId}</td>
+<td>${l.leaveType}</td>
+<td>${l.status}</td>
+<td>${l.startDate}</td>
+<td>${l.endDate}</td>
+</tr>
+`;
+
+});
+
+leaveTable.innerHTML=rows;
+
+}
+
+async function createPayroll(){
+
+let obj={
+
+employee:{
+empId:Number(payrollEmpId.value)
+},
+
+payMonth:Number(payMonth.value),
+payYear:Number(payYear.value),
+
+basicSalary:Number(basicSalary.value),
+hra:Number(hra.value||0),
+allowances:Number(allowances.value||0),
+bonus:Number(bonus.value||0),
+deductions:Number(deductions.value||0)
+
+};
+
+await fetch(API+"/payroll",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(obj)
+});
+
+loadPayroll();
+
+}
+
+async function loadPayroll(){
+
+let res=await fetch(API+"/payroll");
+let data=await res.json();
+
+payrollCount.innerHTML=data.length;
+
+let rows="";
+
+data.forEach(p=>{
+
+rows+=`
+<tr>
+<td>${p.payrollId}</td>
+<td>${p.employee?.empId}</td>
+<td>${p.payMonth}</td>
+<td>${p.payYear}</td>
+<td>${p.basicSalary}</td>
+<td>${p.netSalary}</td>
+</tr>
+`;
+
+});
+
+payrollTable.innerHTML=rows;
+
+}
+
+loadDashboard();
+
+setInterval(loadDashboard,5000);
+
+
+
+
+
+
+
+
+
+// AI Assistant Javascript
+function addMessage(type,text){
+
+let div=document.createElement("div");
+
+div.className=type==="user"?"userMsg":"botMsg";
+
+div.innerHTML=text;
+
+document.getElementById("chatMessages").appendChild(div);
+
+document.getElementById("chatMessages").scrollTop=
+document.getElementById("chatMessages").scrollHeight;
+}
+
+
+
+
+
+function speak(text){
+
+let speech=new SpeechSynthesisUtterance(text);
+
+window.speechSynthesis.speak(speech);
+}
+
+
+
+
+
+function sendBotMessage(){
+
+let input=document.getElementById("botInput");
+
+let msg=input.value.trim();
+
+if(!msg) return;
+
+addMessage("user",msg);
+
+processBot(msg);
+
+input.value="";
+}
+
+function processBot(message){
+
+let msg = message.toLowerCase().trim();
+
+let response = "";
+
+// Greetings
+if(
+    msg.includes("hello") ||
+    msg.includes("hi") ||
+    msg.includes("hey")
+){
+    response="Hello 👋 I am HRMS Genie, your AI HR Assistant.";
+}
+
+// Employee Count
+else if(
+    msg.includes("employee count") ||
+    msg.includes("employees count") ||
+    msg.includes("how many employees") ||
+    msg.includes("total employees") ||
+    msg.includes("number of employees")
+){
+    response=`Total Employees: ${empCount.innerHTML}`;
+}
+
+// Attendance Count
+else if(
+    msg.includes("attendance count") ||
+    msg.includes("total attendance") ||
+    msg.includes("how many attendance")
+){
+    response=`Total Attendance Records: ${attCount.innerHTML}`;
+}
+
+// Leave Count
+else if(
+    msg.includes("leave count") ||
+    msg.includes("total leaves")
+){
+    response=`Total Leave Records: ${leaveCount.innerHTML}`;
+}
+
+// Payroll Count
+else if(
+    msg.includes("payroll count") ||
+    msg.includes("total payroll")
+){
+    response=`Total Payroll Records: ${payrollCount.innerHTML}`;
+}
+
+// Employee Details
+else if(
+    msg.includes("employee") &&
+    msg.match(/\d+/)
+){
+
+    let empId = msg.match(/\d+/)[0];
+
+    let row = [...document.querySelectorAll("#employeeTable tr")]
+    .find(r => r.cells[0].innerText == empId);
+
+    if(row){
+
+        response =
+        `Employee ID: ${row.cells[0].innerText}
+        Name: ${row.cells[1].innerText}
+        Department: ${row.cells[3].innerText}
+        Designation: ${row.cells[4].innerText}
+        Salary: ${row.cells[5].innerText}`;
+
+    }else{
+        response = `Employee ${empId} not found`;
+    }
+}
+
+// Employee List
+else if(
+    msg==="employees" ||
+    msg==="employee list" ||
+    msg==="show employees" ||
+    msg==="list employees"
+){
+
+    let rows = [...document.querySelectorAll("#employeeTable tr")];
+
+    response = "Employee List:<br>";
+
+    rows.forEach(r=>{
+        response +=
+        `${r.cells[0].innerText} - ${r.cells[1].innerText}<br>`;
+    });
+}
+
+// Attendance Details
+else if(
+    msg.includes("attendance details") ||
+    msg.includes("show attendance")
+){
+
+    let rows = [...document.querySelectorAll("#attendanceTable tr")];
+
+    response = "Attendance Records:<br>";
+
+    rows.forEach(r=>{
+
+        response +=
+        `Employee ${r.cells[1].innerText}
+        | ${r.cells[2].innerText}
+        | ${r.cells[3].innerText}<br>`;
+    });
+}
+
+// Attendance by Employee
+else if(
+    msg.includes("attendance") &&
+    msg.match(/\d+/)
+){
+
+    let empId = msg.match(/\d+/)[0];
+
+    let rows = [...document.querySelectorAll("#attendanceTable tr")]
+    .filter(r => r.cells[1].innerText == empId);
+
+    if(rows.length > 0){
+
+        response = `Attendance For Employee ${empId}:<br>`;
+
+        rows.forEach(r=>{
+
+            response +=
+            `${r.cells[2].innerText}
+            | ${r.cells[3].innerText}<br>`;
+        });
+
+    }else{
+        response = "No attendance found";
+    }
+}
+
+// Leave Types
+else if(
+    msg.includes("leave types") ||
+    msg.includes("available leaves") ||
+    msg.includes("leave options")
+){
+
+    response =
+    "Available Leave Types:<br>" +
+    "• Casual Leave<br>" +
+    "• Sick Leave<br>" +
+    "• Earned Leave<br>" +
+    "• Maternity Leave<br>" +
+    "• Paternity Leave<br>" +
+    "• Unpaid Leave";
+}
+
+// Leave Details
+else if(
+    msg.includes("leave details") ||
+    msg.includes("show leaves")
+){
+
+    let rows = [...document.querySelectorAll("#leaveTable tr")];
+
+    response = "Leave Records:<br>";
+
+    rows.forEach(r=>{
+
+        response +=
+        `Employee ${r.cells[1].innerText}
+        | ${r.cells[2].innerText}
+        | ${r.cells[3].innerText}<br>`;
+    });
+}
+
+// Payroll Details
+else if(
+    msg.includes("payroll") &&
+    msg.match(/\d+/)
+){
+
+    let empId = msg.match(/\d+/)[0];
+
+    let row = [...document.querySelectorAll("#payrollTable tr")]
+    .find(r => r.cells[1].innerText == empId);
+
+    if(row){
+
+        response =
+        `Payroll Details<br>
+        Employee ID: ${row.cells[1].innerText}<br>
+        Month: ${row.cells[2].innerText}<br>
+        Year: ${row.cells[3].innerText}<br>
+        Basic Salary: ${row.cells[4].innerText}<br>
+        Net Salary: ${row.cells[5].innerText}`;
+
+    }else{
+        response = "Payroll not found";
+    }
+}
+
+// Help
+else if(
+    msg.includes("help")
+){
+
+    response =
+    `I can answer:<br><br>
+    • Employee Count<br>
+    • Show Employee 1<br>
+    • Employee List<br>
+    • Attendance Count<br>
+    • Attendance Details<br>
+    • Attendance 1<br>
+    • Leave Types<br>
+    • Leave Details<br>
+    • Payroll Count<br>
+    • Payroll 1`;
+}
+
+// Default
+else{
+
+    response =
+    "Sorry, I did not understand.<br><br>" +
+    "Try:<br>" +
+    "Employee Count<br>" +
+    "How many employees are there?<br>" +
+    "Show Employee 1<br>" +
+    "Employee List<br>" +
+    "Attendance Details<br>" +
+    "Leave Types<br>" +
+    "Payroll 1";
+}
+
+setTimeout(()=>{
+
+    addMessage("bot",response);
+
+    speak(
+        response.replace(/<br>/g," ")
+    );
+
+},500);
+
+}
+
+
+
+function startVoice(){
+
+const SpeechRecognition=
+window.SpeechRecognition||
+window.webkitSpeechRecognition;
+
+if(!SpeechRecognition){
+alert("Voice recognition not supported");
+return;
+}
+
+const recognition=new SpeechRecognition();
+
+recognition.lang="en-US";
+
+recognition.start();
+
+recognition.onresult=function(event){
+
+let text=event.results[0][0].transcript;
+
+document.getElementById("botInput").value=text;
+
+sendBotMessage();
+};
+}
+
+
+document.getElementById("botInput")
+.addEventListener("keypress",function(e){
+
+if(e.key==="Enter"){
+sendBotMessage();
+}
+
+});
+
+addMessage(
+    "bot",
+    "Hello 👋 I am HRMS Genie. I can help with Employees, Attendance, Leave and Payroll."
+);
+
+
+
+
+
+function toggleBot(){
+
+let chat=document.getElementById("chatMessages");
+let controls=document.getElementById("botControls");
+
+if(chat.style.display==="none"){
+
+chat.style.display="block";
+controls.style.display="flex";
+
+}else{
+
+chat.style.display="none";
+controls.style.display="none";
+
+}
+
+}
+
+
+
+
+</script>
+
+
+
+</body>
+</html>
